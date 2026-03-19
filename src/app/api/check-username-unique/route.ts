@@ -31,7 +31,7 @@ export async function GET(request: Request) {
   }
 
     const {username} = result.data;
-   const existingVarifiedUser =await UserModel.findOne({username,isVarified:true})
+   const existingVarifiedUser =await UserModel.findOne({username,isVerified:true})
    if(existingVarifiedUser){
     return new Response(JSON.stringify({
       success: false,

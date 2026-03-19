@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     // Only verified users should "reserve" usernames.
     const existingVerifiedByUsername = await UserModel.findOne({
       username,
-      isVarified: true,
+      isVerified: true,
     });
     if (existingVerifiedByUsername) {
       return new Response(
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
     // We'll save the user first, then send the email. If sending fails, rollback so username stays available.
     if (existingUserByEmail) {
-      if (existingUserByEmail.isVarified) {
+      if (existingUserByEmail.isVerified) {
         return new Response(
           JSON.stringify({ success: false, message: "Email already exists" }),
           { status: 400 },
@@ -55,15 +55,15 @@ export async function POST(request: Request) {
       const prev = {
         username: existingUserByEmail.username,
         password: existingUserByEmail.password,
-        varifyCode: existingUserByEmail.varifyCode,
-        varifyCodeExpiry: existingUserByEmail.varifyCodeExpiry,
+        varifyCode: existingUserByEmail.verifyCode,
+        varifyCodeExpiry: existingUserByEmail.verifyCodeExpiry,
       };
 
       const hashedPassword = await bcrypt.hash(password, 10);
       existingUserByEmail.username = username;
       existingUserByEmail.password = hashedPassword;
-      existingUserByEmail.varifyCode = verifyCode;
-      existingUserByEmail.varifyCodeExpiry = expiryDate;
+      existingUserByEmail.verifyCode = verifyCode;
+      existingUserByEmail.verifyCodeExpiry = expiryDate;
 
       await existingUserByEmail.save();
 
@@ -76,8 +76,8 @@ export async function POST(request: Request) {
         // rollback and ensure username isn't reserved by an unverified record
         existingUserByEmail.username = prev.username;
         existingUserByEmail.password = prev.password;
-        existingUserByEmail.varifyCode = prev.varifyCode;
-        existingUserByEmail.varifyCodeExpiry = prev.varifyCodeExpiry;
+        existingUserByEmail.verifyCode = prev.varifyCode;
+        existingUserByEmail.verifyCodeExpiry = prev.varifyCodeExpiry;
         await existingUserByEmail.save();
         await UserModel.deleteMany({ username, isVarified: false });
 
@@ -99,8 +99,8 @@ export async function POST(request: Request) {
       username,
       email,
       password: hashedPassword,
-      varifyCode: verifyCode,
-      varifyCodeExpiry: expiryDate,
+      verifyCode: verifyCode,
+      verifyCodeExpiry: expiryDate,
       isVarified: false,
       isAcceptingMessages: true,
       messages: [],
