@@ -6,6 +6,7 @@ import axios, { AxiosError } from 'axios'
 import { toast } from 'sonner'
 import { Loader2, Sparkles, UserPlus } from 'lucide-react'
 import { ApiResponse } from '@/src/types/ApiResponse'
+import { Button } from '@/components/ui/button'
 
 function Page() {
   const params = useParams<{ username: string }>()
