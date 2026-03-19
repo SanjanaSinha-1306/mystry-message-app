@@ -150,7 +150,7 @@ function Page() {
                 </span>
               </div>
               {/* ON/OFF indicator labels restored */}
-              <span className={`text-xs font-bold ${acceptMessage ? 'text-green-500' : 'text-red-500'}`}>
+              <span className={`text-xs font-bold ${acceptMessage ? 'text-green-500' : 'text-red-400'}`}>
                 {acceptMessage ? "ON" : "OFF"}
               </span>
             </div>

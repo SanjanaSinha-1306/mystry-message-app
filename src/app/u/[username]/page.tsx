@@ -126,16 +126,15 @@ function Page() {
           </div>
         </div>
 
-        {/* Signup Link */}
-        <div className="text-center pt-8 border-t border-slate-900 mt-12">
-          <p className="text-sm text-slate-500 mb-4">Want your own anonymous inbox?</p>
-          <Button
-            variant="outline"
+       <div className="text-center pt-6 border-t border-slate-900">
+          <p className=" text-3xl text-slate-500 mb-4">Want your own anonymous inbox?</p>
+          <button
             onClick={() => router.push('/sign-up')}
-            className="border-slate-800 text-slate-300 hover:bg-slate-900"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-2.5 font-bold hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all"
           >
-            Create Your Account
-          </Button>
+            <UserPlus size={18} />
+            Create Your Link
+          </button>
         </div>
       </div>
     </div>
