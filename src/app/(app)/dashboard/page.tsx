@@ -100,12 +100,13 @@ const copyToClipboard = async () => {
 if(!session || !session.user){
   return <div className="p-6">Please Login</div>
 }
-  return (
+  //
+return (
   <div className="min-h-[calc(100vh-56px)] bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-    {/* Changed px-4 to px-2 for more room on small phones */}
+    {/* Use px-2 for mobile to prevent horizontal scrolling */}
     <div className="mx-auto max-w-5xl px-2 sm:px-6 py-8 space-y-6">
       
-      {/* Header section: Stacks vertically on mobile, horizontal on desktop */}
+      {/* Header stacks on mobile, aligns on sm screens */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           <div className="text-xl sm:text-2xl font-bold tracking-tight">Dashboard</div>
@@ -114,13 +115,13 @@ if(!session || !session.user){
           </div>
         </div>
 
-        {/* Buttons: Become full-width and stack on mobile */}
+        {/* Buttons: full-width on mobile, auto-width in line on big screens */}
         <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
           <Button 
             variant="secondary" 
             onClick={copyToClipboard} 
             disabled={!profileUrl}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto justify-center"
           >
             <Copy className="mr-2 h-4 w-4" />
             Copy link
@@ -128,7 +129,7 @@ if(!session || !session.user){
           <Button 
             onClick={() => fetchMessage(true)} 
             disabled={isLoading}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto justify-center"
           >
             <RefreshCcw className="mr-2 h-4 w-4" />
             Refresh
@@ -136,7 +137,7 @@ if(!session || !session.user){
         </div>
       </div>
 
-      {/* Grid: 1 column on mobile, 2 columns on medium screens (md) */}
+      {/* Grid: 1 column on mobile, 2 columns on tablets/desktop */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
         <Card className="border-slate-800 bg-slate-900/40 p-4">
           <div className="flex items-center justify-between gap-3">
@@ -150,15 +151,12 @@ if(!session || !session.user){
                 {acceptMessage ? "Accepting messages" : "Not accepting messages"}
               </div>
             </div>
-            <div className="text-[10px] sm:text-xs text-slate-400">
-              {acceptMessage ? "ON" : "OFF"}
-            </div>
           </div>
         </Card>
 
         <Card className="border-slate-800 bg-slate-900/40 p-4">
-          {/* Added 'break-all' and 'text-xs' so the long URL doesn't break the layout */}
-          <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-[10px] sm:text-sm text-slate-200 break-all overflow-hidden">
+          {/* Added 'break-all' to prevent long URLs from breaking UI */}
+          <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-[10px] sm:text-sm text-slate-200 break-all overflow-hidden text-center sm:text-left">
             {profileUrl || "—"}
           </div>
         </Card>
@@ -169,9 +167,6 @@ if(!session || !session.user){
         {messages.length === 0 ? (
           <Card className="border-slate-800 bg-slate-900/40 p-6 text-center">
             <div className="text-sm text-slate-300">No messages yet.</div>
-            <div className="text-xs text-slate-500 mt-1">
-              Share your link and check back later.
-            </div>
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-3">
@@ -187,7 +182,7 @@ if(!session || !session.user){
       </div>
     </div>
   </div>
-)
+);
 }
 
 export default Page

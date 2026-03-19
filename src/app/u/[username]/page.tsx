@@ -63,82 +63,58 @@ function Page() {
   }
 };
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-white py-12 px-4">
-      <div className="mx-auto max-w-2xl space-y-10">
-        
-        {/* Header Section */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Public Profile Link</h1>
-          <p className="text-slate-400">Send an anonymous message to @{username}</p>
-        </div>
+  // src/app/u/[username]/page.tsx
+return (
+  <div className="min-h-screen bg-slate-950 text-white py-8 px-4 sm:px-6">
+    <div className="mx-auto max-w-2xl space-y-8">
+      
+      {/* Header section */}
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Public Profile Link</h1>
+        <p className="text-xs sm:text-sm text-slate-400">Send an anonymous message to @{username}</p>
+      </div>
 
-        {/* 1. MESSAGE CARD (TOP) */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-4 shadow-xl">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-200">Send Anonymous Message</label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write your secret message here..."
-              rows={4}
-              className="w-full resize-none rounded-lg bg-slate-950 border border-slate-800 px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-600"
-            />
-          </div>
-          <div className="flex justify-center">
+      {/* Message Card */}
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 sm:p-6 space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Send Anonymous Message</label>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Write your secret message here..."
+            className="w-full min-h-[120px] rounded-lg bg-slate-950 border border-slate-800 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+        <div className="flex justify-center">
+          <Button onClick={sendMessage} disabled={isSending} className="w-full sm:w-auto px-10">
+            {isSending ? 'Sending...' : 'Send It'}
+          </Button>
+        </div>
+      </div>
+
+      {/* AI Suggestions Grid: 1 column on mobile */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <h2 className="font-semibold">AI Suggestions</h2>
+          <Button onClick={generateSuggestions} className="w-full sm:w-auto bg-white text-black text-xs px-4">
+            Suggest Messages
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 gap-3">
+          {suggestions.map((s, idx) => (
             <button
-              onClick={sendMessage}
-              disabled={isSending || !message.trim()}
-              className="rounded-lg bg-blue-600 px-8 py-2 font-bold hover:bg-blue-500 disabled:bg-slate-800 transition-all active:scale-95"
+              key={idx}
+              onClick={() => setMessage(s)}
+              className="text-left rounded-lg border border-slate-800 bg-slate-950/40 p-4 text-xs sm:text-sm hover:bg-slate-900 transition-colors break-words"
             >
-              {isSending ? <Loader2 className="animate-spin" /> : 'Send It'}
+              {s}
             </button>
-          </div>
+          ))}
         </div>
-
-        {/* 2. AI SUGGESTIONS (MIDDLE) */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 space-y-6 shadow-xl">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-slate-200">AI Suggestions</h2>
-            <button
-              onClick={generateSuggestions}
-              disabled={isGenerating}
-              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-black hover:bg-slate-200 disabled:opacity-50 transition-all active:scale-95"
-            >
-              {isGenerating ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
-              {isGenerating ? 'Thinking...' : 'Suggest Messages'}
-            </button>
-          </div>
-
-          <div className="grid gap-3">
-            {suggestions.map((s, idx) => (
-              <button
-                key={idx}
-                onClick={() => setMessage(s)}
-                className="text-left rounded-lg border border-slate-800 bg-slate-950/40 p-4 text-sm text-slate-300 hover:bg-slate-900/60 hover:border-slate-600 transition-all active:scale-[0.98]"
-              >
-                <div className="text-xs text-slate-500 mb-1 font-mono uppercase tracking-wider">Option {idx + 1}</div>
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 3. SIGNUP LINK (BOTTOM) */}
-        <div className="text-center pt-6 border-t border-slate-900">
-          <p className=" text-3xl text-slate-500 mb-4">Want your own anonymous inbox?</p>
-          <button
-            onClick={() => router.push('/sign-up')}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-2.5 font-bold hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all"
-          >
-            <UserPlus size={18} />
-            Create Your Link
-          </button>
-        </div>
-
       </div>
     </div>
-  )
+  </div>
+);
 }
 
 export default Page
