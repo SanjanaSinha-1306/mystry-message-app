@@ -1,7 +1,7 @@
-import { resend } from '@/src/lib/resend';
+import nodemailer from 'nodemailer';
+import { render } from '@react-email/render';
 import VerificationEmail from '../../emails/VerificationEmail';
 import { ApiResponse } from '../types/ApiResponse';
-import { render } from '@react-email/render'; //
 
 export async function sendVerificationEmail(
   email: string,
@@ -9,15 +9,28 @@ export async function sendVerificationEmail(
   verifyCode: string
 ): Promise<ApiResponse> {
   try {
-    // This turns your React template into HTML text
+    // 1. Create the Gmail transporter using environment variables
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER, // Your Gmail address
+        pass: process.env.GMAIL_PASS, // Your 16-character App Password
+      },
+    });
+
+    // 2. Convert your existing React template into HTML text
     const emailHtml = await render(VerificationEmail({ username, otp: verifyCode }));
 
-    await resend.emails.send({
-      from: 'onboarding@resend.dev', // Default for accounts without a domain
-      to: email, // REMEMBER: This must be YOUR Resend account email for now
+    // 3. Configure the mail options
+    const mailOptions = {
+      from: `"Mystery Message" <${process.env.GMAIL_USER}>`,
+      to: email, // Now anyone can receive this!
       subject: 'Mystery Message | Verify your email',
       html: emailHtml, 
-    });
+    };
+
+    // 4. Send the email via Gmail
+    await transporter.sendMail(mailOptions);
 
     return { success: true, message: 'Verification email sent successfully' };
   } catch (error) {
