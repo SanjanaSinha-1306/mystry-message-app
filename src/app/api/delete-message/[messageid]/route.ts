@@ -2,20 +2,19 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/option";
 import dbConnect from "@/src/lib/dbConnect";
 import UserModel from "@/src/model/User";
-import { User } from "next-auth";
 
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ messageid: string }> }
 ) {
-  // Await params first as required by newer Next.js versions
+  // 1. Await params (Required in Next.js 15+)
   const { messageid: messageId } = await params;
 
   await dbConnect();
+  
+  // 2. Get and validate session
   const session = await getServerSession(authOptions);
 
-  // 1. Guard Clause: Check if session and user exist
-  // This prevents the "Type 'undefined' is not assignable to type 'User'" error
   if (!session || !session.user) {
     return new Response(
       JSON.stringify({
@@ -26,13 +25,12 @@ export async function DELETE(
     );
   }
 
-  // 2. Now it is safe to assign the user variable
-  const user: User = session.user;
+  // 3. Extract user ID (TypeScript now knows _id exists thanks to the .d.ts file)
+  const userId = session.user._id;
 
   try {
-    // Perform the update to pull the message from the array
     const updateResult = await UserModel.updateOne(
-      { _id: user._id },
+      { _id: userId },
       { $pull: { messages: { _id: messageId } } }
     );
 
