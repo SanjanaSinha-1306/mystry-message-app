@@ -1,52 +1,70 @@
-'use client'
-
-
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { MessageSquare } from 'lucide-react'
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12 bg-slate-950 text-white">
-      <section className="text-center mb-8 md:mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
-          Get honest messages — <br className="hidden sm:block" />
-          without revealing identities.
-        </h1>
-        <p className="text-sm md:text-lg text-slate-400 max-w-lg mx-auto">
-          Create your page, share your unique link, and let friends send you anonymous messages. 
-          You can toggle when you want to receive messages.
-        </p>
-      </section>
-
-      {/* Buttons: Stacked on mobile, side-by-side on big screens */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs sm:max-w-none justify-center">
-        <Link href="/sign-up" className="w-full sm:w-auto">
-          <Button className="w-full sm:px-8 bg-blue-600 hover:bg-blue-700">
-            Create your inbox
-          </Button>
-        </Link>
-        <Link href="/sign-in" className="w-full sm:w-auto">
-          <Button variant="outline" className="w-full sm:px-8 border-slate-700 text-slate-200">
-            Login
-          </Button>
-        </Link>
-      </div>
-
-      {/* How it works section - Responsive Grid */}
-      <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
-        {[
-          { step: "1", title: "Sign up & verify", desc: "Create an account and verify your email to get started." },
-          { step: "2", title: "Share your link", desc: "Post your unique URL on social media or send it to friends." },
-          { step: "3", title: "Read messages", desc: "View incoming anonymous feedback directly in your dashboard." }
-        ].map((item) => (
-          <div key={item.step} className="p-6 rounded-xl border border-slate-800 bg-slate-900/40">
-            <div className="text-blue-500 font-bold mb-2">Step {item.step}</div>
-            <h3 className="font-semibold mb-1">{item.title}</h3>
-            <p className="text-xs text-slate-400">{item.desc}</p>
+    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+      <main className="mx-auto max-w-6xl px-4 py-16">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="space-y-6">
+            <div className="inline-flex items-center rounded-full border border-slate-800 bg-slate-900/40 px-3 py-1 text-xs text-slate-300">
+              Anonymous messages • Verified accounts • AI prompts
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+              Get honest messages — without revealing identities.
+            </h1>
+            <p className="text-slate-300 text-lg leading-relaxed">
+              Create your page, share your unique link, and let friends send you anonymous messages.
+              You can toggle when you want to receive messages, and keep everything in one dashboard.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-500 px-5 py-3 font-semibold"
+              >
+                Create your inbox
+              </Link>
+              <Link
+                href="/sign-in"
+                className="inline-flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 px-5 py-3 font-semibold"
+              >
+                Login
+              </Link>
+              <Link
+                href="/u/demo"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-700 hover:bg-slate-900 px-5 py-3 font-semibold"
+              >
+                View demo page
+              </Link>
+            </div>
+            <div className="text-sm text-slate-400">
+              People can send you messages without logging in. Only you need an account.
+            </div>
           </div>
-        ))}
-      </div>
-    </main>
-  )
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 shadow-2xl">
+            <div className="space-y-4">
+              <div className="text-sm text-slate-300">How it works</div>
+              <div className="grid gap-3">
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                  <div className="font-semibold">1) Sign up + verify email</div>
+                  <div className="text-sm text-slate-400">We send an OTP to confirm it’s you.</div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                  <div className="font-semibold">2) Share your unique URL</div>
+                  <div className="text-sm text-slate-400">Like <span className="text-slate-200">/u/yourname</span>.</div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                  <div className="font-semibold">3) Receive messages in dashboard</div>
+                  <div className="text-sm text-slate-400">Toggle accepting messages anytime.</div>
+                </div>
+              </div>
+              <div className="text-xs text-slate-500">
+                Built for fun, honesty, and good vibes.
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
