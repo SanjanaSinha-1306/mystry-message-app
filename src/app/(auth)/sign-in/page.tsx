@@ -28,22 +28,21 @@ function Page() {
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
   setIsSubmitting(true)
   try {
-    const result = await signIn('credentials', {
+   const result = await signIn('credentials', {
       redirect: false, // We handle redirect manually for better UX/Toasts
-      identifier: data.identifier,
-      password: data.password,
-    })
+  identifier: data.identifier,
+  password: data.password,
+});
 
-    if (result?.error) {
-      toast.error(result.error)
-      return
-    }
-
-    if (result?.url) {
-      toast.success('Login successful')
-      // This is the specific line that sends the user to the dashboard
-      router.replace('/dashboard')
-    }
+if (result?.ok) {
+  // 1. Force a refresh to update the 'useSession' hook
+  router.refresh(); 
+  
+  // 2. Redirect to dashboard
+  router.replace('/dashboard'); 
+} else {
+  toast.error("Invalid credentials");
+}
   } finally {
     setIsSubmitting(false)
   }

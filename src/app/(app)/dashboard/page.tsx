@@ -75,21 +75,27 @@ useEffect(() => {
   setProfileUrl(`${baseUrl}/u/${username}`)
 }, [session])
 
-const handleSwitchChange = async()=>{
-  setIsSwitchLoading(true)
+const handleSwitchChange = async () => {
+  setIsSwitchLoading(true);
   try {
-   await axios.post<ApiResponse>('/api/accept-messages',{
-      acceptMessages: !acceptMessage
-    })
-    setValue('acceptMessages', !acceptMessage)
-    toast.success("Updated")
+    // 1. Calculate the new state first
+    const newStatus = !acceptMessage; 
+    
+    // 2. Send the update to the backend
+    await axios.post<ApiResponse>('/api/accept-messages', {
+      acceptMessages: newStatus
+    });
+
+    // 3. Manually update the form value so the UI reflects it immediately
+    setValue('acceptMessages', newStatus); 
+    
+    toast.success(`Messages are now ${newStatus ? 'ON' : 'OFF'}`);
   } catch (error) {
-       const axiosError = error as AxiosError<ApiResponse>
-    toast.error("Failed to update setting")
+    toast.error("Failed to update settings");
   } finally {
-    setIsSwitchLoading(false)
+    setIsSwitchLoading(false);
   }
-}
+};
 
 const copyToClipboard = async () => {
   if (!profileUrl) return
