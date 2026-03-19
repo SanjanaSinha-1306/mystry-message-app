@@ -17,172 +17,173 @@ import { Card } from '@/components/ui/card'
 import { Copy, RefreshCcw } from 'lucide-react'
 
 function Page() {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSwitchLoading, setIsSwitchLoading] = useState(false)
+  const [profileUrl, setProfileUrl] = useState<string>("")
 
-const [messages, setMessages] = useState<Message[]>([])
-const [isLoading, setIsLoading] = useState(false)
-const [isSwitchLoading, setIsSwitchLoading] = useState(false)
-const [profileUrl, setProfileUrl] = useState<string>("")
+  const { data: session } = useSession()
 
-const handleDeleteMessage =(messageId : string)=>{
-  setMessages(messages.filter((message) => message._id.toString() !== messageId ))
-}
-const {data:session} = useSession()
-const form = useForm({
-  resolver: zodResolver(AcceptMessageSchema)
-})
-const { register , watch, setValue } = form;
-const acceptMessage = watch('acceptMessages')
+  const form = useForm({
+    resolver: zodResolver(AcceptMessageSchema)
+  })
 
-const fetchAcceptMessage = useCallback(async()=>{
-  setIsSwitchLoading(true)
-  try {
-   const response = await axios.get<ApiResponse>('/api/accept-messages')
-   setValue('acceptMessages', !!response.data.isAcceptingMessages)
-    
-  } catch (error) {
-    const axiosError = error as AxiosError<ApiResponse>
-    toast.error("Failed to fetch msessage setting")
-  } finally{
-    setIsSwitchLoading(false)
+  const { register, watch, setValue } = form
+  const acceptMessage = watch('acceptMessages')
+
+  const handleDeleteMessage = (messageId: string) => {
+    setMessages(messages.filter((message) => message._id.toString() !== messageId))
   }
-},[setValue])
-const fetchMessage = useCallback( async(refresh: boolean= false)=>{
+
+  const fetchAcceptMessage = useCallback(async () => {
+    setIsSwitchLoading(true)
+    try {
+      const response = await axios.get<ApiResponse>('/api/accept-messages')
+      setValue('acceptMessages', !!response.data.isAcceptingMessages)
+    } catch (error) {
+      toast.error("Failed to fetch message settings")
+    } finally {
+      setIsSwitchLoading(false)
+    }
+  }, [setValue])
+
+  const fetchMessage = useCallback(async (refresh: boolean = false) => {
     setIsLoading(true)
     try {
-     const response = await axios.get<ApiResponse>('/api/get-messages')
-      setMessages(response.data.messages ||[])
-      if(refresh){
+      const response = await axios.get<ApiResponse>('/api/get-messages')
+      setMessages(response.data.messages || [])
+      if (refresh) {
         toast.success("Showing latest messages")
       }
     } catch (error) {
-       const axiosError = error as AxiosError<ApiResponse>
-    toast.error("Failed to fetch messages")
-    }finally{
+      toast.error("Failed to fetch messages")
+    } finally {
       setIsLoading(false)
     }
-},[setIsLoading,setMessages])
+  }, [])
 
-useEffect(()=>{
-  if(!session|| !session.user)return
-  fetchMessage()
-  fetchAcceptMessage()
-},[session,setValue,fetchAcceptMessage,fetchMessage])
+  useEffect(() => {
+    if (!session || !session.user) return
+    fetchMessage()
+    fetchAcceptMessage()
+  }, [session, fetchAcceptMessage, fetchMessage])
 
-useEffect(() => {
-  const { username } = (session?.user ?? {}) as User
-  if (!username) return
-  const baseUrl = `${window.location.protocol}//${window.location.host}`
-  setProfileUrl(`${baseUrl}/u/${username}`)
-}, [session])
+  useEffect(() => {
+    if (!session?.user) return
+    const { username } = session.user as User
+    if (!username) return
+    const baseUrl = `${window.location.protocol}//${window.location.host}`
+    setProfileUrl(`${baseUrl}/u/${username}`)
+  }, [session])
 
-const handleSwitchChange = async()=>{
-  setIsSwitchLoading(true)
-  try {
-   await axios.post<ApiResponse>('/api/accept-messages',{
-      acceptMessages: !acceptMessage
-    })
-    setValue('acceptMessages', !acceptMessage)
-    toast.success("Updated")
-  } catch (error) {
-       const axiosError = error as AxiosError<ApiResponse>
-    toast.error("Failed to update setting")
-  } finally {
-    setIsSwitchLoading(false)
+  const handleSwitchChange = async () => {
+    setIsSwitchLoading(true)
+    try {
+      const response = await axios.post<ApiResponse>('/api/accept-messages', {
+        acceptMessages: !acceptMessage
+      })
+      setValue('acceptMessages', !acceptMessage)
+      toast.success(response.data.message || "Status updated")
+    } catch (error) {
+      toast.error("Failed to update settings")
+    } finally {
+      setIsSwitchLoading(false)
+    }
   }
-}
 
-const copyToClipboard = async () => {
-  if (!profileUrl) return
-  await navigator.clipboard.writeText(profileUrl)
-  toast.success("Copied")
-}
+  const copyToClipboard = async () => {
+    if (!profileUrl) return
+    await navigator.clipboard.writeText(profileUrl)
+    toast.success("Copied to clipboard")
+  }
 
-if(!session || !session.user){
-  return <div className="p-6">Please Login</div>
-}
-  //
-return (
-  <div className="min-h-[calc(100vh-56px)] bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-    {/* Use px-2 for mobile to prevent horizontal scrolling */}
-    <div className="mx-auto max-w-5xl px-2 sm:px-6 py-8 space-y-6">
-      
-      {/* Header stacks on mobile, aligns on sm screens */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <div className="text-xl sm:text-2xl font-bold tracking-tight">Dashboard</div>
-          <div className="text-xs sm:text-sm text-slate-300">
-            Your anonymous inbox. Toggle when you want to receive messages.
+  if (!session || !session.user) {
+    return <div className="flex justify-center items-center min-h-screen text-white bg-slate-950">Please Login</div>
+  }
+
+  return (
+    <div className="min-h-[calc(100vh-56px)] bg-slate-950 text-white">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 space-y-6">
+        
+        {/* Header: Responsive stack on mobile, inline on desktop */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-xs sm:text-sm text-slate-400">
+              Your anonymous inbox. Toggle when you want to receive messages.
+            </p>
+          </div>
+
+          <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
+            <Button 
+              variant="secondary" 
+              onClick={copyToClipboard} 
+              disabled={!profileUrl}
+              className="w-full sm:w-auto"
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copy link
+            </Button>
+            <Button 
+              onClick={() => fetchMessage(true)} 
+              disabled={isLoading}
+              className="w-full sm:w-auto"
+            >
+              <RefreshCcw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
           </div>
         </div>
 
-        {/* Buttons: full-width on mobile, auto-width in line on big screens */}
-        <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
-          <Button 
-            variant="secondary" 
-            onClick={copyToClipboard} 
-            disabled={!profileUrl}
-            className="w-full sm:w-auto justify-center"
-          >
-            <Copy className="mr-2 h-4 w-4" />
-            Copy link
-          </Button>
-          <Button 
-            onClick={() => fetchMessage(true)} 
-            disabled={isLoading}
-            className="w-full sm:w-auto justify-center"
-          >
-            <RefreshCcw className="mr-2 h-4 w-4" />
-            Refresh
-          </Button>
-        </div>
-      </div>
-
-      {/* Grid: 1 column on mobile, 2 columns on tablets/desktop */}
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-        <Card className="border-slate-800 bg-slate-900/40 p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Switch
-                checked={!!acceptMessage}
-                onCheckedChange={handleSwitchChange}
-                disabled={isSwitchLoading}
-              />
-              <div className="text-xs sm:text-sm text-slate-200">
-                {acceptMessage ? "Accepting messages" : "Not accepting messages"}
+        {/* Status and Link Grid */}
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+          <Card className="border-slate-800 bg-slate-900/40 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={!!acceptMessage}
+                  onCheckedChange={handleSwitchChange}
+                  disabled={isSwitchLoading}
+                />
+                <span className="text-xs sm:text-sm text-slate-200">
+                  {acceptMessage ? "Accepting messages" : "Not accepting messages"}
+                </span>
               </div>
+              {/* ON/OFF indicator labels restored */}
+              <span className={`text-xs font-bold ${acceptMessage ? 'text-green-500' : 'text-red-500'}`}>
+                {acceptMessage ? "ON" : "OFF"}
+              </span>
             </div>
-          </div>
-        </Card>
-
-        <Card className="border-slate-800 bg-slate-900/40 p-4">
-          {/* Added 'break-all' to prevent long URLs from breaking UI */}
-          <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-[10px] sm:text-sm text-slate-200 break-all overflow-hidden text-center sm:text-left">
-            {profileUrl || "—"}
-          </div>
-        </Card>
-      </div>
-
-      {/* Messages area */}
-      <div className="space-y-3">
-        {messages.length === 0 ? (
-          <Card className="border-slate-800 bg-slate-900/40 p-6 text-center">
-            <div className="text-sm text-slate-300">No messages yet.</div>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-3">
-            {messages.map((m) => (
-              <MessageCard
-                key={m._id.toString()}
-                message={m}
-                onMessageDelete={handleDeleteMessage}
-              />
-            ))}
-          </div>
-        )}
+
+          <Card className="border-slate-800 bg-slate-900/40 p-4">
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-[10px] sm:text-sm text-slate-200 break-all overflow-hidden text-center sm:text-left">
+              {profileUrl || "—"}
+            </div>
+          </Card>
+        </div>
+
+        {/* Message list */}
+        <div className="space-y-3">
+          {messages.length === 0 ? (
+            <Card className="border-slate-800 bg-slate-900/40 p-8 text-center">
+              <p className="text-sm text-slate-400">No messages yet.</p>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 gap-3">
+              {messages.map((m) => (
+                <MessageCard
+                  key={m._id.toString()}
+                  message={m}
+                  onMessageDelete={handleDeleteMessage}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  )
 }
 
 export default Page
