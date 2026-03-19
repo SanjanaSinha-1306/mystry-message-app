@@ -7,7 +7,7 @@ export async function POST(request: Request) {
  const {username,content}= await request.json()
 
   try{
-    const user = await UserModel.findOne({ username, isVarified: true });
+    const user = await UserModel.findOne({ username, isVerified: true });
     if(!user){
       return new Response(JSON.stringify({
         success: false,
