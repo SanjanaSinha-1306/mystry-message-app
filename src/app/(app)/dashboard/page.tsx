@@ -75,27 +75,21 @@ useEffect(() => {
   setProfileUrl(`${baseUrl}/u/${username}`)
 }, [session])
 
-const handleSwitchChange = async () => {
-  setIsSwitchLoading(true);
+const handleSwitchChange = async()=>{
+  setIsSwitchLoading(true)
   try {
-    // 1. Calculate the new state first
-    const newStatus = !acceptMessage; 
-    
-    // 2. Send the update to the backend
-    await axios.post<ApiResponse>('/api/accept-messages', {
-      acceptMessages: newStatus
-    });
-
-    // 3. Manually update the form value so the UI reflects it immediately
-    setValue('acceptMessages', newStatus); 
-    
-    toast.success(`Messages are now ${newStatus ? 'ON' : 'OFF'}`);
+   await axios.post<ApiResponse>('/api/accept-messages',{
+      acceptMessages: !acceptMessage
+    })
+    setValue('acceptMessages', !acceptMessage)
+    toast.success("Updated")
   } catch (error) {
-    toast.error("Failed to update settings");
+       const axiosError = error as AxiosError<ApiResponse>
+    toast.error("Failed to update setting")
   } finally {
-    setIsSwitchLoading(false);
+    setIsSwitchLoading(false)
   }
-};
+}
 
 const copyToClipboard = async () => {
   if (!profileUrl) return
@@ -107,78 +101,93 @@ if(!session || !session.user){
   return <div className="p-6">Please Login</div>
 }
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
-      <div className="mx-auto max-w-5xl px-4 py-8 space-y-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1">
-            <div className="text-2xl font-bold tracking-tight">Dashboard</div>
-            <div className="text-sm text-slate-300">
-              Your anonymous inbox. Toggle when you want to receive messages.
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={copyToClipboard} disabled={!profileUrl}>
-              <Copy className="mr-2 h-4 w-4" />
-              Copy link
-            </Button>
-            <Button onClick={() => fetchMessage(true)} disabled={isLoading}>
-              <RefreshCcw className="mr-2 h-4 w-4" />
-              Refresh
-            </Button>
+  <div className="min-h-[calc(100vh-56px)] bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+    {/* Changed px-4 to px-2 for more room on small phones */}
+    <div className="mx-auto max-w-5xl px-2 sm:px-6 py-8 space-y-6">
+      
+      {/* Header section: Stacks vertically on mobile, horizontal on desktop */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1">
+          <div className="text-xl sm:text-2xl font-bold tracking-tight">Dashboard</div>
+          <div className="text-xs sm:text-sm text-slate-300">
+            Your anonymous inbox. Toggle when you want to receive messages.
           </div>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <Card className="border-slate-800 bg-slate-900/40 p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Switch
-                  checked={!!acceptMessage}
-                  onCheckedChange={handleSwitchChange}
-                  disabled={isSwitchLoading}
-                />
-                <div className="text-sm text-slate-200">
-                  {acceptMessage ? "Accepting messages" : "Not accepting messages"}
-                </div>
-              </div>
-              <div className="text-xs text-slate-400">
-                {acceptMessage ? "ON" : "OFF"}
-              </div>
-            </div>
-          </Card>
-
-          <Card className="border-slate-800 bg-slate-900/40 p-4">
-            {/* Link card: show only the link (no extra text) */}
-            <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm text-slate-200 break-all">
-              {profileUrl || "—"}
-            </div>
-          </Card>
-        </div>
-
-        <div className="space-y-3">
-          {messages.length === 0 ? (
-            <Card className="border-slate-800 bg-slate-900/40 p-6">
-              <div className="text-sm text-slate-300">No messages yet.</div>
-              <div className="text-xs text-slate-500 mt-1">
-                Share your link and check back later.
-              </div>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {messages.map((m) => (
-                <MessageCard
-                  key={m._id.toString()}
-                  message={m}
-                  onMessageDelete={handleDeleteMessage}
-                />
-              ))}
-            </div>
-          )}
+        {/* Buttons: Become full-width and stack on mobile */}
+        <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto">
+          <Button 
+            variant="secondary" 
+            onClick={copyToClipboard} 
+            disabled={!profileUrl}
+            className="w-full sm:w-auto"
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Copy link
+          </Button>
+          <Button 
+            onClick={() => fetchMessage(true)} 
+            disabled={isLoading}
+            className="w-full sm:w-auto"
+          >
+            <RefreshCcw className="mr-2 h-4 w-4" />
+            Refresh
+          </Button>
         </div>
       </div>
+
+      {/* Grid: 1 column on mobile, 2 columns on medium screens (md) */}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <Card className="border-slate-800 bg-slate-900/40 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={!!acceptMessage}
+                onCheckedChange={handleSwitchChange}
+                disabled={isSwitchLoading}
+              />
+              <div className="text-xs sm:text-sm text-slate-200">
+                {acceptMessage ? "Accepting messages" : "Not accepting messages"}
+              </div>
+            </div>
+            <div className="text-[10px] sm:text-xs text-slate-400">
+              {acceptMessage ? "ON" : "OFF"}
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-slate-800 bg-slate-900/40 p-4">
+          {/* Added 'break-all' and 'text-xs' so the long URL doesn't break the layout */}
+          <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-[10px] sm:text-sm text-slate-200 break-all overflow-hidden">
+            {profileUrl || "—"}
+          </div>
+        </Card>
+      </div>
+
+      {/* Messages area */}
+      <div className="space-y-3">
+        {messages.length === 0 ? (
+          <Card className="border-slate-800 bg-slate-900/40 p-6 text-center">
+            <div className="text-sm text-slate-300">No messages yet.</div>
+            <div className="text-xs text-slate-500 mt-1">
+              Share your link and check back later.
+            </div>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-3">
+            {messages.map((m) => (
+              <MessageCard
+                key={m._id.toString()}
+                message={m}
+                onMessageDelete={handleDeleteMessage}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  )
+  </div>
+)
 }
 
 export default Page
