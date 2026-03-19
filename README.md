@@ -14,8 +14,3 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 * **AI:** Google Generative AI SDK
 * **Auth:** NextAuth.js
 
-## 📦 Setup
-1. Clone the repo: `git clone <your-url>`
-2. Install dependencies: `npm install`
-3. Create a `.env.local` and add your `NEXT_PUBLIC_GEMINI_API_KEY`.
-4. Run the app: `npx next dev`
