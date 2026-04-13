@@ -6,7 +6,7 @@ export async function POST() {
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     const genAI = new GoogleGenerativeAI(apiKey || "");
     
-    // FIX: Change to gemini-2.5-flash (The 1.5 series is retired)
+    // gemini-2.5-flash 
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = "Generate three unique, short anonymous questions for a social media profile. Separate them with '||'.";
@@ -16,7 +16,7 @@ export async function POST() {
 
     return NextResponse.json({ text });
   } catch (error: any) {
-    // This will now catch the error and show it in your browser console too
+    
     console.error("Gemini Error:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

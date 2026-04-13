@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -35,7 +35,7 @@ function Page() {
 });
 
 if (result?.ok) {
-  // 1. Force a refresh to update the 'useSession' hook
+  // 1. refresh to update the 'useSession' hook
   router.refresh(); 
   
   // 2. Redirect to dashboard

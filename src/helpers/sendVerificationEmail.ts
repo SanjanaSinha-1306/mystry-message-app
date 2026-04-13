@@ -13,8 +13,8 @@ export async function sendVerificationEmail(
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.GMAIL_USER, // Your Gmail address
-        pass: process.env.GMAIL_PASS, // Your 16-character App Password
+        user: process.env.GMAIL_USER, //  Gmail address
+        pass: process.env.GMAIL_PASS, 
       },
     });
 
@@ -24,7 +24,7 @@ export async function sendVerificationEmail(
     // 3. Configure the mail options
     const mailOptions = {
       from: `"Mystery Message" <${process.env.GMAIL_USER}>`,
-      to: email, // Now anyone can receive this!
+      to: email, 
       subject: 'Mystery Message | Verify your email',
       html: emailHtml, 
     };

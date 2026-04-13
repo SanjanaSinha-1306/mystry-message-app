@@ -1,10 +1,9 @@
 'use client'
 import { SessionProvider } from "next-auth/react"
 
-export default function AuthProvider({
-  children,
-
-}:{children:React.ReactNode}) {
+// To check if the user is authenticated
+export default function AuthProvider({children}
+:{children:React.ReactNode}) {
   return (
     <SessionProvider >
      {children}

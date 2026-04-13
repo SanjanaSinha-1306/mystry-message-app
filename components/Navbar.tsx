@@ -11,11 +11,11 @@ function Navbar() {
 
   return (
     <nav className="sticky top-0 z-40 border-b border-slate-200/10 bg-slate-950/70 backdrop-blur">
-      {/* Container keeps elements in corners while maintaining clean spacing */}
+    
       <div className="mx-auto max-w-[1400px] px-8 py-3 flex items-center justify-between gap-3">
         
         <div className="flex items-center gap-6">
-          {/* Logo: Slightly larger but clean tracking */}
+         
           <Link href="/" className="text-xl font-bold text-white tracking-tight uppercase italic">
             Mystery Message
           </Link>
@@ -34,7 +34,7 @@ function Navbar() {
         <div className="flex items-center gap-4">
           {session ? (
             <>
-              {/* Professional Welcome Message */}
+              {/*  Welcome Message */}
               <span className="hidden sm:inline text-sm text-slate-300">
                 Welcome, <span className="text-white font-medium">{user.username || user.email}</span>
               </span>
@@ -45,7 +45,7 @@ function Navbar() {
                 </Button>
               </Link>
 
-              {/* Professional Logout: Vine Red / Deep Bordeaux color */}
+              
               <Button 
                 onClick={() => signOut()} 
                 className="bg-[#630d0d] hover:bg-[#4a0a0a] text-red-100 text-sm font-semibold px-6 transition-colors border border-[#851414]/30"
